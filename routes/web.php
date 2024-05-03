@@ -8,4 +8,6 @@ Route::controller(PagesController::class)->group(function () {
     Route::get('/nosotros', 'us');
     Route::get('/contacto', 'contact');
     Route::get('/login', 'login');
+    Route::get('/testing-eloquent', 'testingEloquent');
+    Route::get('/filters', 'filters');
 });
