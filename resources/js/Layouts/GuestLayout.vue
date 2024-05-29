@@ -3,5 +3,7 @@
 </script>
 <template>
     <GuestNav />
-    <slot />
+    <div class="bg-gray-100 my-height pt-4">
+        <slot />
+    </div>
 </template>

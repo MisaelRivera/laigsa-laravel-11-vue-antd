@@ -11,3 +11,4 @@ Route::controller(PagesController::class)->group(function () {
     Route::get('/testing-eloquent', 'testingEloquent');
     Route::get('/filters', 'filters');
 });
+

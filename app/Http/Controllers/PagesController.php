@@ -2,10 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\AuthUserRequest;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use App\Models\Order;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
 use Illuminate\Database\Eloquent\Builder;
 
@@ -33,6 +35,21 @@ class PagesController extends Controller
     public function login ()
     {
         return Inertia::render('Login', ['title' => 'Login']);
+    }
+
+    public function auth (AuthUserRequest $request)
+    {
+        $credentials = $request->validated();
+
+        if (Auth::attempt($credentials)) {
+            $request->session()->regenerate();
+ 
+            return redirect()->route('orders.index');
+        }
+
+        return back()->withErrors([
+            'email' => 'Las credenciales son incorrectas',
+        ]);
     }
 
     public function testingEloquent ()
