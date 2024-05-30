@@ -45,10 +45,22 @@ class Order extends Model
         return $this->hasOne(Siralab::class, 'id_orden');
     }
 
-    public function muestras () {
-        return $this->hasMany(Sample::class, 'id_orden');
+    public function muestras ()
+    {
+        if ($this->aguas_alimentos === 'Aguas') {
+            return $this->hasMany(WaterSample::class, 'id_orden');
+        } else {
+            return $this->hasMany(FoodSample::class, 'id_orden');
+        }
     }
 
+    public function muestras_aguas () {
+        return $this->hasMany(WaterSample::class, 'id_orden');
+    }
+
+    public function muestras_alimentos () {
+        return $this->hasMany(FoodSample::class, 'id_orden');
+    }
 
     protected function supervision (): Attribute {
         return Attribute::make(

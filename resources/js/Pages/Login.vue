@@ -5,6 +5,7 @@
     import GuestLayout from '@/Layouts/GuestLayout.vue';
     const props = defineProps({
         title: String,
+        errors: Object
     });
     
     const formState = useForm({
@@ -13,7 +14,7 @@
     });
     
     const handleFinish = () => {
-
+        formState.post('/login');
     };
 
     const rules = {
@@ -61,6 +62,10 @@
                     name="password"
                     label="Password">
                     <Input v-model:value="formState.password"/>
+                </FormItem>
+                <p v-if="errors.email">{{ errors.email }}</p>
+                <FormItem>
+                    <button class="bg-green-400 hover:bg-green-600 text-white py-2 px-4 rounded">Entrar</button>
                 </FormItem>
             </Form>
         </div>
