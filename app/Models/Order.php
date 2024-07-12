@@ -45,14 +45,14 @@ class Order extends Model
         return $this->hasOne(Siralab::class, 'id_orden');
     }
 
-    public function muestras ()
+    /*public function muestras ()
     {
         if ($this->aguas_alimentos === 'Aguas') {
             return $this->hasMany(WaterSample::class, 'id_orden');
         } else {
             return $this->hasMany(FoodSample::class, 'id_orden');
         }
-    }
+    }*/
 
     public function muestras_aguas () {
         return $this->hasMany(WaterSample::class, 'id_orden');
@@ -62,7 +62,7 @@ class Order extends Model
         return $this->hasMany(FoodSample::class, 'id_orden');
     }
 
-    protected function supervision (): Attribute {
+    /*protected function supervision (): Attribute {
         return Attribute::make(
             get: function ($value) {
                $result = DB::table('ordenes')
@@ -75,7 +75,7 @@ class Order extends Model
                 }
             }
         );
-    } 
+    } */
 
     public static function getOrderWithLastFolio()
     {

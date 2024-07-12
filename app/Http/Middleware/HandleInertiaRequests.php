@@ -41,6 +41,12 @@ class HandleInertiaRequests extends Middleware
                 'logoUrl' => asset('img/logo.png')
             ],
 
+            'flash' => [
+                'error' => $request->session()->get('error'), 
+                'message' => $request->session()->get('message'),
+                'muestras_creadas' => $request->session()->get('muestras_creadas'),
+            ],
+
             'routes' => [
                 'current' => $request->path()
             ]

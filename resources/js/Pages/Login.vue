@@ -61,7 +61,7 @@
                 <FormItem
                     name="password"
                     label="Password">
-                    <Input v-model:value="formState.password"/>
+                    <InputPassword v-model:value="formState.password"/>
                 </FormItem>
                 <p v-if="errors.email">{{ errors.email }}</p>
                 <FormItem>

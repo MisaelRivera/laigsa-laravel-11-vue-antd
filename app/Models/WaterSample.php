@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class WaterSample extends Model
 {
-    protected $table = 'muestras_orden';
+    protected $table = 'muestras_aguas';
     protected $fillable = [
         'tipo_muestra',
         'id_identificacion_muestra',
@@ -38,6 +38,17 @@ class WaterSample extends Model
         'otros_parametros',
         'preservacion_correcta'
     ];
+
+    protected $casts = [
+        'hora_muestreo' => 'datetime:H:i', // Casts time to Carbon instance,
+        'hora_final_muestreo' => 'datetime:H:i', // Casts time to Carbon instance,
+        'hora_composicion' => 'datetime:H:i', // Casts time to Carbon instance,
+        'tratada_biologicamente' => 'boolean',
+        'siralab' => 'boolean',
+        'otros_parametros' => 'boolean'
+    ];
+
+
     public $timestamps = false;
     use HasFactory;
 
