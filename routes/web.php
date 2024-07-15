@@ -21,6 +21,8 @@ Route::middleware('auth')->group(function () {
         Route::get('/create', [OrdersController::class, 'create'])->name('orders.create');
         Route::get('/show/{id}', [OrdersController::class, 'show'])->name('orders.show');
         Route::get('/edit/{id}', [OrdersController::class, 'edit'])->name('orders.edit');
+        Route::get('/change-page', [OrdersController::class, 'changePage']);
+        Route::get('/get-client-for-order', [OrdersController::class, 'getClientForOrder']);
         /*Route::get('/test', [TestController::class, 'test']);
         Route::get('/test-dynamic-form', [TestController::class, 'viewTestDynamicForm']);
         Route::get('/testing', [TestController::class, 'viewTestingForm']);

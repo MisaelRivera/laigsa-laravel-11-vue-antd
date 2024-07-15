@@ -5,10 +5,11 @@
     import AdminLayout from '@/Layouts/AdminLayout.vue';
     import ShowLink from '@/Components/Shared/ShowLink.vue';
     import Dropdown from '@/Components/Dropdown.vue';
+    import Pagination from '@/Components/Shared/Pagination.vue';
     import CircleSwitch from '@/Components/Shared/CircleSwitch.vue';
     import { Head, Link } from '@inertiajs/vue3';
     import { addDaysWithoutSundays } from '@/helpers/time_helper.js';
-    import IndexFilters from '@/Components/Shared/IndexFilters.vue';
+    import IndexFilter from '@/Components/Shared/IndexFilter.vue';
     import IndexTitle from '@/Components/Shared/IndexTitle.vue';
 
     const props = defineProps(
@@ -17,11 +18,18 @@
                 required: true,
             },
 
-            page: {
-                type: String
-            }
+            totalItems: {
+                type: Number,
+                required: true,
+            },
         }
     );    
+
+    const totalItems = ref(props.totalItems);
+    const page = ref(1);
+    const pages = ref(10);
+    const items = ref(40);
+
     const usePageCons = usePage();
 
     const orders = ref(props.ordersProp);
@@ -32,27 +40,48 @@
         cesavedac: false,
     });
 
-     const filter = async (filterType, filterValue) => {
+    const filter = async (filterType, filterValue) => {
         filters[filterType] = filterValue;
         console.log(filterType);
         console.log(filterValue);
         let filteredOrders = await axios.post('/orders/filter', filters);
         orders.value = filteredOrders.data.data;
     };
+    
+    const handleChangePage = async (pageArg) => {
+        page.value = pageArg;
+        let ordersResults = await axios.get('/orders/change-page?page=' + pageArg);
+        orders.value = ordersResults.data;
+        console.log(orders.value);
+    };
 </script>
 <template>
     <AdminLayout>
         <div class="w-11/12 mx-auto mt-3">
-            <div class="w-8/12 mx-auto">
+            <div class="w-8/12 mx-auto flex justify-between">
                 <IndexTitle 
                      title="Ordenes"
                      ownLink="/orders"
                      addLink="/orders/create"/>
+                <Pagination
+                    :total-items="totalItems"
+                    :items-per-page-prop="items"
+                    :pages-per-chunk-prop="pages"
+                    :current-page-prop="page"
+                    @change-page="handleChangePage" />
             </div>
-            <IndexFilters 
-                @filter="filter"
-                type-prop="client"
-                :value-prop="filters.client"/>
+            <div class="w-8/12 mx-auto my-4 bg-blue-200 rounded px-4 py-3">
+                <div class="w-3/12">
+                    <IndexFilter 
+                        @filter="filter"
+                        type-prop="client"
+                        text="Cliente"
+                        :value-prop="filters.client"/>
+                </div>
+                <div class="w-6/12">
+                    
+                </div>
+            </div>
             <Alert 
                 :message="usePageCons.props.flash.error"
                 v-if="usePageCons.props.flash.error"

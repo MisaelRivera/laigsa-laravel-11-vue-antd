@@ -44,15 +44,39 @@ class OrdersController extends Controller
             'ordersProp' => $orders,
             'itemsProp' => $items,
             'pageProp' => $page,
-            'pagesProp' => $pages
+            'pagesProp' => $pages,
+            'totalItems' => Order::count()
         ]);
     }
 
-    public function create () 
+    public function create ()
     {
-        $data = ['lastOrder' => Order::getOrderWithLastFolio()];
-        $data['aguas'] = $data['lastOrder']->aguas_alimentos === 'Aguas'; 
-        return Inertia::render('orders/Create', $data);
+        $last_order = Order::getOrderWithLastFolio();
+        return Inertia::render('orders/Create', ['last_order' => $last_order]);
+    }
+
+    public function changePage (Request $request)
+    {
+        $page = $request->query('page');
+        $orders = Order::leftJoin('siralab', 'ordenes.id', '=', 'siralab.id_orden')
+            ->join('clientes', 'ordenes.id_cliente', '=', 'clientes.id')
+            ->select('ordenes.*', 'siralab.id as siralab_id', 'siralab.hoja_campo', 'siralab.cadena_custodia', 'siralab.croquis', 'clientes.cliente')
+            ->orderBy('fecha_recepcion', 'desc')
+            ->orderBy('hora_recepcion', 'desc')
+            ->orderBy('folio', 'desc')
+            ->offset(($page - 1) * 40)
+            ->limit(40)
+            ->get();
+        return response()->json($orders);
+    }
+
+    public function getClientForOrder (Request $request)
+    {
+        $search_text = $request->query('search');
+        $clients = Client::where('cliente', 'like', "%" . $search_text . "%")
+            ->limit(10)
+            ->get();
+        return response()->json($clients);
     }
 
     public function store (Request $request)
