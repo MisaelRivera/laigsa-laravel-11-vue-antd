@@ -68,7 +68,7 @@
     function handleChangePage (ev)
     {
         const target = ev.target;
-        emit('changePage', target.innerText);
+        emit('changePage', parseInt(target.innerText));
     }
 
 </script>

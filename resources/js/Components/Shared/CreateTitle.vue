@@ -1,4 +1,4 @@
-<script>
+<script setup>
     import { Link } from '@inertiajs/vue3';
     import { ArrowLeftOutlined } from '@ant-design/icons-vue';
     defineProps({

@@ -83,34 +83,24 @@ class OrdersController extends Controller
     {
         $order = $request->validate([
             'folio' => 'required|unique:ordenes,folio|integer',
-            'numero_muestras' => 'required|integer|min:1|max:30',
+            'numero_muestras' => 'required|integer|min:0|max:30',
             'aguas_alimentos' => 'required|string',
-            'id_cliente' => 'required|exists:clientes_muestreo,id',
+            'cliente' => 'required|exists:clientes,cliente',
             'fecha_recepcion' => 'nullable|date',
             'hora_recepcion' => 'nullable',
+            'numero_cotizacion' => 'nullable',
+            'numero_termometro' => 'nullable',
+            'temperatura' => 'nullable',
+            'observaciones' => 'nullable',
             'aguas_alimentos' => ['required', Rule::in(['Aguas', 'Alimentos'])],
             'cesavedac' => 'required|boolean',
             'area_recepcion_muestras_limpia' => 'required|boolean',
         ]);
 
-        $client = Client::find($order['id_cliente']);
+        $client = Client::where('cliente', $order['cliente'])->first();
        $order['direccion_muestreo'] = $client->direccion_muestreo;
-        if ($request->filled('numero_cotizacion')) {
-            $order['numero_cotizacion'] = $request->input('numero_cotizacion');
-        }
-
-        if ($request->filled('termometro')) {
-            $order['termometro'] = $request->input('termometro');
-        }
-
-        if ($request->filled('temperatura')) {
-            $order['temperatura'] = $request->input('temperatura');
-        }
-
-        if ($request->filled('observaciones')) {
-            $order['observaciones'] = $request->input('observaciones');
-        }
-
+       unset($order['cliente']);
+       $order['id_cliente'] = $client->id;
 
         $order = Order::create($order);
         $folio = $request->input('folio');
@@ -118,9 +108,12 @@ class OrdersController extends Controller
 
         /*$order->v_libreta_resultados = 1;
         $order->save();*/
-
+        $route_name = 'samples.create';
+        if ($order->aguas_alimentos === 'Aguas') {
+            $route_name .= '_water';
+        }
         return redirect()
-            ->route("samples.create", [$folio, $numero_muestras, 1])
+            ->route($route_name, [$folio, $numero_muestras, 1])
             ->with('message', 'Se ha creado una nuva orden correctamente. A continuacion cree las muestras de la orden');
     }
 

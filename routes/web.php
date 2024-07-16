@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\OrdersController;
 use App\Http\Controllers\PagesController;
+use App\Http\Controllers\SamplesController;
 use Illuminate\Support\Facades\Route;
 
 Route::controller(PagesController::class)->group(function () {
@@ -38,5 +39,11 @@ Route::middleware('auth')->group(function () {
         Route::post('/toggle-croquis', [OrdersController::class, 'toggleCroquis']);
         Route::post('/toggle-reporte-entregado', [OrdersController::class, 'toggleReporteEntregado']);
         Route::post('/filter', [OrdersController::class, 'filter']);
+    });
+});
+
+Route::middleware('auth')->group(function () {
+    Route::prefix('/samples')->group(function () {
+        Route::get('/create-water/{folio}/{numero_muestras}/{inicio_muestras}', [SamplesController::class, 'createWater'])->name('samples.create_water');
     });
 });

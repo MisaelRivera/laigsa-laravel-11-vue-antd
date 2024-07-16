@@ -2,7 +2,7 @@
     import { ref } from 'vue';
     import { useForm } from '@inertiajs/vue3';
     import AdminLayout from '@/Layouts/AdminLayout.vue';
-    import { Row, Col, Input, Select, SelectOption, Form, FormItem, AutoComplete } from 'ant-design-vue';
+    import { Row, Col, Input, InputNumber, Select, SelectOption, Form, FormItem, AutoComplete, Textarea, Checkbox } from 'ant-design-vue';
     import { ArrowLeftOutlined } from '@ant-design/icons-vue';
     const props = defineProps({
         last_order: {
@@ -19,21 +19,27 @@
         cliente: null,
         fecha_recepcion: null,
         hora_recepcion: null,
+        numero_termometro: null,
+        temperatura: null,
+        observaciones: null,
+        cesavedac: false,
+        area_recepcion_muestras_limpia: false,
     });
     
     const clientOptions = ref([]);
 
     const handleSubmit = () => {
-        console.log(formState);
+        formState.post('/orders');
     };
 
     const handleClientSearch = async(searchText) => 
     {
         const res = await axios.get(`/orders/get-client-for-order?search=${searchText}`);
         console.log(res.data);
-        clientOptions.value = res.data.map((client) => {
-           return client.cliente
+        let clients = res.data.map((client) => {
+           return { value: client.cliente}
         });
+        clientOptions.value = clients;
     };
 
 
@@ -88,9 +94,12 @@
                                 label="Numero de muestras"
                                 name="numero_muestras"
                                 :rules="[{required: true, message: 'Introduce el numero de muestras'}]">
-                                <Input 
+                                <InputNumber 
                                     v-model:value="formState.numero_muestras"
-                                    placeholder="Numero de muestras"/>
+                                    placeholder="Numero de muestras"
+                                    :min="0"
+                                    class="w-full"
+                                    :max="30"/>
                             </FormItem>
                         </Col>
                         <Col 
@@ -116,7 +125,7 @@
                         </Col>
                     </Row>
                     <Row>
-                        <Col :span="12">
+                        <Col :span="11">
                             <FormItem
                                 label="Cliente"
                                 name="cliente"
@@ -126,6 +135,61 @@
                                     @search="handleClientSearch"
                                     :options="clientOptions"/>
                             </FormItem>
+                        </Col>
+                        <Col 
+                            :span="5"
+                            :offset="1">
+                            <FormItem
+                                label="Fecha de recepcion"
+                                name="fecha_recepcion">
+                                <Input 
+                                    type="date" 
+                                    v-model:value="formState.fecha_recepcion"/>
+                            </FormItem>
+                        </Col>
+                        <Col 
+                            :span="5"
+                            :offset="1">
+                            <FormItem
+                                label="Hora de recepcion"
+                                name="hora_recepcion">
+                                <Input 
+                                    type="time" 
+                                    v-model:value="formState.hora_recepcion"/>
+                            </FormItem>
+                        </Col>
+                    </Row>
+                    <Row>
+                        <Col :span="5">
+                            <FormItem
+                                label="Termometro no."
+                                name="numero_termometro">
+                                <Input 
+                                    v-model:value="formState.numero_termometro"/>
+                            </FormItem>
+                        </Col>
+                        <Col :span="5" :offset="1">
+                            <FormItem
+                                label="Temperatura °C"
+                                name="temperatura">
+                                <Input 
+                                    v-model:value="formState.temperatura"/>
+                            </FormItem>
+                        </Col>
+                    </Row>
+                    <FormItem 
+                        label="Observaciones"
+                        name="observaciones">
+                        <Textarea 
+                            :style="{'width': '400px', 'height': '100px', 'min-height': '100px', 'max-height': '100px'}"
+                            v-model:value="formState.observaciones"></Textarea>
+                    </FormItem>
+                    <Row>
+                        <Col :span="3">
+                            <Checkbox v-model:checked="formState.cesavedac">Cesavedac</Checkbox>
+                        </Col>
+                        <Col :span="15">
+                            <Checkbox v-model:checked="formState.area_recepcion_muestras_limpia">Se realizó desinfección en el areá de recepción después de recibir la última muestra.</Checkbox>
                         </Col>
                     </Row>
                     <button class="bg-green-600 text-white py-2 px-4 rounded">
