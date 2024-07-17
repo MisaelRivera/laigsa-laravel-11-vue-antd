@@ -77,13 +77,24 @@
                             :key="i">
                             <h3 class="text-center font-bold text-3xl col-span-12">Muestra MFQ-{{ order.folio }} - {{ i + inicioMuestras }}</h3>
                             <Row class="col-span-12">
-                                <Col :span="24">
+                                <Col :span="12">
                                     <FormItem
                                         :label="`Tipo de muestra ${i + 1}`"
                                         :name="`tipo_muestra_${i + 1}`"
                                         :rules="[{required: true, message: 'Ingrese el tipo de muestra'}]">
                                         <Input 
                                             v-model:value="formState[`tipo_muestra_${i + 1}`]"/>
+                                    </FormItem>
+                                </Col>
+                                <Col :span="12">
+                                    <FormItem
+                                        :label="`Identificacion de la muestra ${i + 1}`"
+                                        :name="`identificacion_muestra_${i + 1}`"
+                                        :rules="[{required: true, message: 'Elija una opcion'}]">
+                                        <Select 
+                                            v-model:value="formState[`identificacion_muestra_${i + 1}`]"
+                                            :options="identificacionesMuestra">
+                                        </Select>
                                     </FormItem>
                                 </Col>
                             </Row>

@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -48,6 +49,13 @@ class WaterSample extends Model
         'otros_parametros' => 'boolean'
     ];
 
+    protected function tipoMuestreo (): Attribute {
+        return Attribute::make(
+            get: function (string $value) {
+               return str_replace('_', ' ', $value);
+            }
+        );
+    }
 
     public $timestamps = false;
     use HasFactory;

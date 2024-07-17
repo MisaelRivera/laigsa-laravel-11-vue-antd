@@ -120,7 +120,7 @@ class OrdersController extends Controller
     public function show ($id)
     {
         $order = Order::where('id', $id)
-            ->with(['cliente', 'muestras.identificacionMuestraRelacion'])
+            ->with(['cliente'])
             ->first();
         
         if(!isset($order)) {
@@ -128,10 +128,13 @@ class OrdersController extends Controller
         } 
 
         if ($order->aguas_alimentos === 'Aguas') {
-            foreach ($order->muestras as $muestra) {
-                $muestra->latitud = $muestra->identificacionMuestraRelacion->latitud;
-                $muestra->longitud = $muestra->identificacionMuestraRelacion->longitud;
-            }
+            $order->muestras = WaterSample::leftJoin('identificacion_muestras', 'muestras_aguas.id_identificacion_muestra', '=', 'identificacion_muestras.id')
+                ->select('muestras_aguas.*', 'identificacion_muestras.identificacion_muestra', 'identificacion_muestras.latitud', 'identificacion_muestras.longitud', 'identificacion_muestras.siralab', 'identificacion_muestras.obsoleta')
+                ->where('id_orden', $order->id)
+                ->get();
+        } else {
+            $order->muestras = FoodSample::where('id_orden', $order->id)
+            ->get();
         }
 
         return Inertia::render('orders/Show', ['order' => $order]);
@@ -158,8 +161,12 @@ class OrdersController extends Controller
     public function update (Request $request, $id)
     {
         $order = $request->validate([
-            'cliente' => 'required|exists:clientes_muestreo,cliente',
-            'direccion_muestreo' => 'required|exists:clientes_muestreo,direccion_muestreo',
+            'cliente' => 'required|exists:clientes,cliente',
+            'direccion_muestreo' => 'required|exists:clientes,direccion_muestreo',
+            'numero_cotizacion' => 'nullable',
+            'numero_termometro' => 'nullable',
+            'temperatura' => 'nullable',
+            'observacion' => 'nullable',
             'fecha_recepcion' => 'nullable|date',
             'hora_recepcion' => 'nullable',
             'aguas_alimentos' => ['required', Rule::in(['Aguas', 'Alimentos'])],
@@ -171,22 +178,6 @@ class OrdersController extends Controller
             ->where('cliente', $order['cliente'])
             ->first()['id'];
         unset($order['cliente']);
-       
-        if ($request->filled('numero_cotizacion')) {
-            $order['numero_cotizacion'] = $request->input('numero_cotizacion');
-        }
-
-        if ($request->filled('termometro')) {
-            $order['termometro'] = $request->input('termometro');
-        }
-
-        if ($request->filled('temperatura')) {
-            $order['temperatura'] = $request->input('temperatura');
-        }
-
-        if ($request->filled('observaciones')) {
-            $order['observaciones'] = $request->input('observaciones');
-        }
 
         Order::where('id', $id)
             ->update($order);

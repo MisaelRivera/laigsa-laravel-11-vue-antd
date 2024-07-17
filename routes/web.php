@@ -3,6 +3,7 @@
 use App\Http\Controllers\OrdersController;
 use App\Http\Controllers\PagesController;
 use App\Http\Controllers\SamplesController;
+use App\Http\Controllers\ClientsController;
 use Illuminate\Support\Facades\Route;
 
 Route::controller(PagesController::class)->group(function () {
@@ -45,5 +46,11 @@ Route::middleware('auth')->group(function () {
 Route::middleware('auth')->group(function () {
     Route::prefix('/samples')->group(function () {
         Route::get('/create-water/{folio}/{numero_muestras}/{inicio_muestras}', [SamplesController::class, 'createWater'])->name('samples.create_water');
+    });
+});
+
+Route::middleware('auth')->group(function () {
+    Route::prefix('/clients')->group(function () {
+        Route::get('/clients_by_name', [ClientsController::class, 'clientsByName']);
     });
 });
