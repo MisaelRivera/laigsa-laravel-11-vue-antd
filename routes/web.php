@@ -4,6 +4,7 @@ use App\Http\Controllers\OrdersController;
 use App\Http\Controllers\PagesController;
 use App\Http\Controllers\SamplesController;
 use App\Http\Controllers\ClientsController;
+use App\Http\Controllers\UnitsController;
 use Illuminate\Support\Facades\Route;
 
 Route::controller(PagesController::class)->group(function () {
@@ -52,5 +53,17 @@ Route::middleware('auth')->group(function () {
 Route::middleware('auth')->group(function () {
     Route::prefix('/clients')->group(function () {
         Route::get('/clients_by_name', [ClientsController::class, 'clientsByName']);
+    });
+});
+
+Route::middleware('auth')->group(function () {
+    Route::prefix('/units')->group(function () {
+        Route::get('/', [UnitsController::class, 'index'])->name('units.index');
+        Route::get('/create', [UnitsController::class, 'create']);
+        Route::post('/', [UnitsController::class, 'store']);
+        Route::get('/show/{id}', [UnitsController::class, 'show']);
+        Route::get('/edit/{id}', [UnitsController::class, 'edit']);
+        Route::put('/{id}', [UnitsController::class, 'update']);
+        Route::delete('/{id}', [UnitsController::class, 'destroy'])->name('units.destroy');
     });
 });

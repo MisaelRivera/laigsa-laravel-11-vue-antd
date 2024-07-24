@@ -53,6 +53,9 @@
                                     <Link href="/parameters">Parametros</Link>
                                 </a-menu-item>
                                 <a-menu-item>
+                                    <Link href="/units">Unidades</Link>
+                                </a-menu-item>
+                                <a-menu-item>
                                     <Link href="/orders-info">Ordenes info</Link>
                                 </a-menu-item>
                             </a-menu>
