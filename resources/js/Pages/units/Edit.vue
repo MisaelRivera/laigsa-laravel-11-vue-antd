@@ -21,7 +21,7 @@
     <AdminLayout>
         <div class="w-6/12 mx-auto mt-4 bg-slate-50 py-3">
             <Row>
-                <Col :span="10" :offset="3">
+                <Col :span="18" :offset="3">
                     <CreateTitle 
                         :title="`Editar unidad ${unit.nombre}`"
                         own-link="/units/create"

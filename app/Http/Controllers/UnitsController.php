@@ -13,7 +13,7 @@ class UnitsController extends Controller
     {
         $units = Unit::limit(40)
             ->get();
-        return Inertia::render('units/Index', ['units' => $units]);
+        return Inertia::render('units/Index', ['unitsProp' => $units, 'totalItemsProp' => Unit::count()]);
     }
 
     public function create ()
@@ -71,5 +71,25 @@ class UnitsController extends Controller
         $unit->delete();
 
         return redirect()->route('units.index', [$id])->with('message', "Se ha eliminado la unidad $unitName correctamente!");
+    }
+
+    public function changePage (Request $request)
+    {
+        $page = $request->query('page');
+        $units = Unit::offset(($page - 1) * 40)
+            ->limit(40)
+            ->get();
+        return response()->json($units);
+    }
+
+    public function filter (Request $request)
+    {
+        $value = $request->query('value');
+        $type = $request->query('type');
+        $units = Unit::where($type, 'like', "%$value%")
+            ->limit(40)
+            ->get();
+        
+        return response()->json($units);
     }
 }

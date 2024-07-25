@@ -56,14 +56,16 @@ Route::middleware('auth')->group(function () {
     });
 });
 
-Route::middleware('auth')->group(function () {
+//Route::middleware('auth')->group(function () {
     Route::prefix('/units')->group(function () {
         Route::get('/', [UnitsController::class, 'index'])->name('units.index');
         Route::get('/create', [UnitsController::class, 'create']);
         Route::post('/', [UnitsController::class, 'store']);
+        Route::get('/change-page', [UnitsController::class, 'changePage']);
+        Route::get('/filter', [UnitsController::class, 'filter']);
         Route::get('/show/{id}', [UnitsController::class, 'show']);
         Route::get('/edit/{id}', [UnitsController::class, 'edit']);
         Route::put('/{id}', [UnitsController::class, 'update']);
         Route::delete('/{id}', [UnitsController::class, 'destroy'])->name('units.destroy');
     });
-});
+//});

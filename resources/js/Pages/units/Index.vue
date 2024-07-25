@@ -4,10 +4,19 @@
     import IndexTitle from '@/Components/Shared/IndexTitle.vue';
     import { usePage, Link, useForm } from '@inertiajs/vue3';
     import { Alert, Modal } from 'ant-design-vue';
+    import Pagination from '@/Components/Shared/Pagination.vue';
     const props = defineProps({
-        units: Object
+        unitsProp: Object,
+        totalItemsProp: {
+            type: Number
+        }
     });
-    const page = usePage();
+    const units = ref(props.unitsProp);
+    const pageUse = usePage();
+    const totalItems = ref(props.totalItemsProp);
+    const page = ref(1);
+    const pages = ref(10);
+    const items = ref(40);
     const deleteModalOpen = ref(false);
     const deleteUnit = useForm({
         id: null,
@@ -24,26 +33,58 @@
         deleteUnit.delete('/units/' + deleteUnit.id);
         deleteModalOpen.value = false;
     };
+
+    const handleChangePage = async (pageArg) => {
+        page.value = pageArg;
+        let unitsResults = await axios.get('/units/change-page?page=' + pageArg);
+        console.log(unitsResults);
+        units.value = unitsResults.data;
+        console.log(units.value);
+    };
+
+    const handleFilterByUnit = async(ev, type) => {
+        const value = ev.target.value;
+        console.log(value);
+        let unitsResults = await axios.get(`/units/filter?value=${value}&type=${type}`);
+        units.value = unitsResults.data;
+    };
 </script>
 <template>
     <AdminLayout>
         <div class="w-10/12 mx-auto">
             <Alert
                 type="success"
-                v-if="page.props.flash.message"
-                :message="page.props.flash.message"
+                v-if="pageUse.props.flash.message"
+                :message="pageUse.props.flash.message"
                 closable
                 class="mb-3"/>
             <div>
-                <IndexTitle 
-                    title="Unidades"
-                    add-link="/units/create"
-                    own-link="/units"/>
+                <div class="flex justify-between">
+                    <IndexTitle 
+                        title="Unidades"
+                        add-link="/units/create"
+                        own-link="/units"/>
+                    <Pagination
+                        :total-items="totalItems"
+                        :items-per-page-prop="items"
+                        :pages-per-chunk-prop="pages"
+                        :current-page-prop="page"
+                        @change-page="handleChangePage" />
+                    <div></div>
+                </div>
             </div>
             <table class="border">
                 <thead>
                     <tr>
-                        <th class="border">Unidad</th>
+                        <th class="border text-left">
+                            <label for="unit">Unidad</label>
+                            <input 
+                                type="text"
+                                class="py-1 px-4 rounded border ml-2 focus:outline-none focus:ring focus:ring-aqua-400"
+                                id="unit"
+                                placeholder="Filtrar"
+                                @input="(ev) => handleFilterByUnit(ev, 'nombre')">
+                        </th>
                         <th class="border"></th>
                         <th class="border"></th>
                     </tr>

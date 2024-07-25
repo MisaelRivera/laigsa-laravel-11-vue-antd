@@ -2,14 +2,23 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Method;
 use Illuminate\Http\Request;
+use Inertia\Inertia;
 
 class MethodsController extends Controller
 {
     //
     public function index ()
     {
+        $methods = Method::limit(40)
+            ->get();
+        $data = [
+            'methodsProp' => $methods,
+            'totalItemsProp' => Method::count()
+        ];
 
+        return Inertia::render();
     }
 
     public function create ()
